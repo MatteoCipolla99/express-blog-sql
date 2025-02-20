@@ -11,16 +11,16 @@ function index(req, res) {
 }
 //show
 
-const show = (req, res) => {
-  const id = parseInt(req.params.id);
-
-  const post = postsData.find((post) => post.id === id);
-
-  if (!post) {
-    return res.sendStatus(404);
-  }
-  res.json(post);
-};
+function show(req, res) {
+  const id = req.params.id;
+  const sql = "SELECT * FROM posts WHERE id = ?";
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    if (results.length === 0)
+      return res.status(404).json({ error: "Posts not found" });
+    res.json(results[0]);
+  });
+}
 
 //create
 const create = (req, res) => {
